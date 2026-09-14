@@ -146,26 +146,51 @@ container.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 scene.background = makeBackdropTexture();
 
-// a soft dark vignette instead of a flat color — deep ink at the edges,
-// a faint warm-cool glow at the center where the bottle sits
+// parchment vignette with real engraved-chart texture — concentric,
+// hand-wobbled contour lines radiating from where the bottle floats (the
+// same bathymetric hatching that fills the open water on the reference
+// chart), plus fine grain so it reads as printed paper, not a flat gradient
 function makeBackdropTexture() {
-  const size = 512;
+  const size = 768;
   const c = document.createElement("canvas");
   c.width = c.height = size;
   const ctx = c.getContext("2d");
-  const g = ctx.createRadialGradient(
-    size * 0.5,
-    size * 0.42,
-    size * 0.05,
-    size * 0.5,
-    size * 0.5,
-    size * 0.72,
-  );
-  g.addColorStop(0, "#11151f");
-  g.addColorStop(0.45, "#0a0c13");
-  g.addColorStop(1, "#050608");
+  const cx = size * 0.5;
+  const cy = size * 0.42;
+
+  const g = ctx.createRadialGradient(cx, cy, size * 0.05, cx, cy, size * 0.72);
+  g.addColorStop(0, "#f6f0e3");
+  g.addColorStop(0.45, "#ecdfc0");
+  g.addColorStop(1, "#cdbb92");
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, size, size);
+
+  ctx.strokeStyle = "rgba(32, 52, 66, 0.1)";
+  ctx.lineWidth = 1;
+  const rings = Math.floor(size / 11);
+  for (let i = 0; i < rings; i++) {
+    const r = 24 + i * 11;
+    ctx.beginPath();
+    for (let a = 0; a <= Math.PI * 2 + 0.001; a += 0.035) {
+      const wobble = Math.sin(a * 5 + i * 0.6) * 4 + Math.sin(a * 11 - i * 0.3) * 1.6;
+      const rr = r + wobble;
+      const x = cx + Math.cos(a) * rr;
+      const y = cy + Math.sin(a) * rr * 0.9;
+      if (a === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  const grain = ctx.getImageData(0, 0, size, size);
+  for (let i = 0; i < grain.data.length; i += 4) {
+    const n = (Math.random() - 0.5) * 10;
+    grain.data[i] += n;
+    grain.data[i + 1] += n;
+    grain.data[i + 2] += n;
+  }
+  ctx.putImageData(grain, 0, 0);
+
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
@@ -196,11 +221,11 @@ scene.environment = pmrem.fromScene(
   0.35,
 ).texture;
 
-scene.add(new THREE.AmbientLight(0x88aaff, 0.65));
-const key = new THREE.DirectionalLight(0xffffff, 1.15);
+scene.add(new THREE.AmbientLight(0x8d989f, 0.65));
+const key = new THREE.DirectionalLight(0xfff3de, 1.15);
 key.position.set(5, 8, 4);
 scene.add(key);
-const rim = new THREE.DirectionalLight(0x66aaff, 0.85);
+const rim = new THREE.DirectionalLight(0x203442, 0.85);
 rim.position.set(-6, 3, -6);
 scene.add(rim);
 
@@ -426,7 +451,7 @@ const { geometry: kleinGeo, center: bottleCenter } = buildKleinGeometry(
 const baseMesh = new THREE.Mesh(
   kleinGeo,
   new THREE.MeshPhysicalMaterial({
-    color: 0x9ecfff,
+    color: 0xa8b4b9,
     metalness: 0,
     roughness: 0.045,
     transmission: 1.0,
@@ -434,7 +459,7 @@ const baseMesh = new THREE.Mesh(
     ior: 1.45,
     clearcoat: 0.6,
     clearcoatRoughness: 0.34,
-    attenuationColor: new THREE.Color(0x6db3ff),
+    attenuationColor: new THREE.Color(0x203442),
     attenuationDistance: 6,
     envMapIntensity: 1.05,
     specularIntensity: 0.6,
@@ -477,9 +502,9 @@ function refreshTexture() {
   for (let i = 0; i < W * H; i++) {
     const o = i * 4;
     if (cur[i]) {
-      lifeRGBA[o] = 90;
-      lifeRGBA[o + 1] = 225;
-      lifeRGBA[o + 2] = 255;
+      lifeRGBA[o] = 63;
+      lifeRGBA[o + 1] = 132;
+      lifeRGBA[o + 2] = 168;
       lifeRGBA[o + 3] = 255;
     } else {
       lifeRGBA[o] = 0;
@@ -494,8 +519,8 @@ function refreshTexture() {
 // chunky blocks sitting on the bottle
 const blockGeo = new THREE.BoxGeometry(0.085, 0.085, 0.085);
 const blockMat = new THREE.MeshStandardMaterial({
-  color: 0x54d8ff,
-  emissive: 0x1d9bd8,
+  color: 0x3f84a8,
+  emissive: 0x1a5470,
   emissiveIntensity: 1.0,
   roughness: 0.3,
   metalness: 0.1,

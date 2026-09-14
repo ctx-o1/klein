@@ -1,11 +1,16 @@
 :root {
-  --bg: #07080c;
-  --panel: rgba(8, 9, 13, 0.68);
-  --stroke: rgba(255, 255, 255, 0.16);
-  --text: #f2efe3;
-  --muted: rgba(236, 234, 222, 0.8);
-  --accent: #e8c98a;
-  --amber: #a6773f;
+  /* duotone map ink: parchment paper + cartographer's navy, pixel-sampled off
+     an engraved nautical chart (darkest-percentile pixels for pure ink,
+     mid-luminance band for the actual line/hatch grey, lightest for paper) —
+     one glowing "living ink" accent is the only saturated color in an
+     otherwise desaturated ink/paper world */
+  --bg: #f2ece1;
+  --panel: rgba(242, 236, 225, 0.74);
+  --stroke: rgba(32, 52, 66, 0.2);
+  --text: #203442;
+  --muted: rgba(32, 52, 66, 0.5);
+  --accent: #3f84a8;
+  --amber: #6b7680;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }
 * {
@@ -40,9 +45,13 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
-  background: var(--panel);
+  background-color: var(--panel);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch' result='t'/%3E%3CfeColorMatrix in='t' type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+  background-blend-mode: multiply;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--stroke);
+  box-shadow: 0 16px 44px rgba(32, 52, 66, 0.16);
   color: var(--text);
   padding: 28px 24px;
   transition:
