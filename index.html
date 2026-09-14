@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game of Life on a Klein Bottle</title>
+    <meta
+      name="description"
+      content="Conway's Game of Life simulated on the surface of a Klein bottle, rendered in real time with three.js."
+    />
+    <meta name="theme-color" content="#07080c" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body class="panel-hidden">
+    <div id="app"></div>
+
+    <button id="fab" title="Show controls">Menu</button>
+
+    <div class="panel" id="panel">
+      <div class="p-head">
+        <button class="icon-btn" id="btnCollapse" title="Hide panel">
+          Close
+        </button>
+      </div>
+
+      <div class="transport">
+        <button
+          id="btnPlay"
+          class="tbtn hero playing"
+          title="Play/Pause (Space)"
+        >
+          Pause
+        </button>
+        <button id="btnStep" class="tbtn" title="Step once">Step</button>
+        <button id="btnClear" class="tbtn" title="Clear">Clear</button>
+        <button id="btnRandom" class="tbtn" title="Random soup">Random</button>
+      </div>
+
+      <div class="sliderow">
+        <input
+          id="speed"
+          type="range"
+          min="1"
+          max="30"
+          step="1"
+          value="12"
+          title="Speed"
+        />
+        <span class="pill-val" id="speedVal">12/s</span>
+      </div>
+
+      <div class="more">
+        <div class="label"><span>Pattern</span></div>
+        <div class="presets">
+          <button class="preset" data-preset="glider">Glider</button>
+          <button class="preset" data-preset="lwss">Ship</button>
+          <button class="preset" data-preset="pulsar">Pulsar</button>
+          <button class="preset" data-preset="gun">Gun</button>
+        </div>
+        <div class="label"><span>Edges</span></div>
+        <div class="seg">
+          <button id="btnKlein" class="active" aria-pressed="true">
+            Klein
+          </button>
+          <button id="btnTorus" aria-pressed="false">Torus</button>
+        </div>
+        <div class="label"><span>Cells</span></div>
+        <div class="seg">
+          <button id="viewPaint" class="active" aria-pressed="true">
+            Glow
+          </button>
+          <button id="viewBlocks" aria-pressed="false">Blocks</button>
+          <button id="viewBoth" aria-pressed="false">Both</button>
+        </div>
+        <div class="label"><span>Mouse</span></div>
+        <div class="seg">
+          <button id="modeRotate" class="active" aria-pressed="true">
+            Rotate
+          </button>
+          <button id="modePaint" aria-pressed="false">Paint</button>
+        </div>
+        <div class="switchrow">
+          <label class="switch"
+            ><input id="erase" type="checkbox" />Erase</label
+          >
+          <label class="switch"
+            ><input id="spin" type="checkbox" checked />Spin</label
+          >
+          <label class="switch"
+            ><input id="crt" type="checkbox" checked />CRT</label
+          >
+        </div>
+      </div>
+
+      <span id="statLine">gen 0 · pop 0</span>
+    </div>
+
+    <script type="module" src="main.js"></script>
+  </body>
+</html>
